@@ -16,6 +16,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base32Lite.Tests", "Base32L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base32Lite.Benchmarks", "Base32Lite.Benchmarks\Base32Lite.Benchmarks.csproj", "{7C934F36-424C-4FD2-92E8-A7B03881C262}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{926D8F63-018A-43B3-ADA8-D38B266C94BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3DDDF8BC-1188-47D2-A1A6-36E3F7FA85CF}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +44,8 @@ Global
 		{7C934F36-424C-4FD2-92E8-A7B03881C262}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C934F36-424C-4FD2-92E8-A7B03881C262}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C934F36-424C-4FD2-92E8-A7B03881C262}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3DDDF8BC-1188-47D2-A1A6-36E3F7FA85CF} = {926D8F63-018A-43B3-ADA8-D38B266C94BF}
 	EndGlobalSection
 EndGlobal
