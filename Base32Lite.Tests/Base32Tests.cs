@@ -52,7 +52,8 @@ public class Base32Tests(ITestOutputHelper output)
 
         var length = Base32.GetEncodedLength(bytes1);
         var chars = new char[length];
-        Base32.ToBase32(bytes1, chars);
+        var encodedLength = Base32.ToBase32(bytes1, chars);
+        Assert.Equal(length, encodedLength);
         Assert.Equal(base321, new string(chars));
 
         var bytes2 = Base32Reference1.FromBase32(base321);
@@ -62,7 +63,8 @@ public class Base32Tests(ITestOutputHelper output)
 
         var length1 = Base32.GetDataLength(base321.AsSpan());
         var buffer = new byte[length1];
-        Base32.FromBase32(base321.AsSpan(), buffer);
+        var decodedLength = Base32.FromBase32(base321.AsSpan(), buffer);
+        Assert.Equal(length1, decodedLength);
         Assert.Equal(bytes1, buffer);
     }
 
