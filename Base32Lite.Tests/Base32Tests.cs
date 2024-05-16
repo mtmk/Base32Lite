@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 using Base32Lite.Benchmarks;
 using NATS.NKeys.Benchmarks;
@@ -7,24 +8,75 @@ namespace Base32Lite.Tests;
 
 public class Base32Tests(ITestOutputHelper output)
 {
+    void Log(string m) => output.WriteLine($"{m}");
+
+    [Fact]
+    public void EncodeDecode0()
+    {
+        var buffer = new byte[1];
+        // var chars = new char[] { '7', 'A' };
+        var chars = new char[] { 'A', '7' };
+        var decodedLength = Base32Experimental.FromBase32_log(chars, buffer, Log);
+        output.WriteLine($"decodedLength: {decodedLength}");
+        output.WriteLine($"chars: {Base32Experimental.ConvertBase32ToBinaryString(new string(chars))}");
+        output.WriteLine($"b0: {Base32Experimental.ConvertToBinaryString(buffer)}");
+
+        var b1 = Base32Reference1.FromBase32(new string(chars));
+        output.WriteLine($"b2: {Base32Experimental.ConvertToBinaryString(b1)}");
+        var b2 = Base32Reference2.Decode(new string(chars));
+        output.WriteLine($"b2: {Base32Experimental.ConvertToBinaryString(b2)}");
+    }
+
     [Fact]
     public void EncodeDecode()
     {
-        var bytes = "12345678901234567890123456789012"u8;
-        var base32 = Base32Reference1.ToBase32(bytes.ToArray()).Trim('=');
-        output.WriteLine($"base32: {base32}");
-        var sb = new StringBuilder();
-        foreach (var b in bytes)
+        // var data = new byte[] { 0xff, 0x0f };
+        // var data = new byte[] { 0x01 };
+        // var data = new byte[] { 0xf1, 0x53, 0x87, 0x41 };
+        var data = new byte[] { 0xf1, 0x53 };
+        // var data = new byte[] { 0xf1, 0x53, 0xa7, 0xc8, 0xff };
+        var length = Base32.GetEncodedLength(data);
+        var chars = new char[length];
+        var encodedLength = Base32.ToBase32(data, chars);
+        Assert.Equal(length, encodedLength);
+
+        output.WriteLine($"enco: {new string(chars)}");
+        output.WriteLine($"data: {Base32Experimental.ConvertToBinaryString(data)}");
+        output.WriteLine($"base: {Base32Experimental.ConvertBase32ToBinaryString(new string(chars))}");
+        output.WriteLine($"data: {Base32Experimental.ConvertToBinaryString(data, spacer: false, fiveBitChunks: true)}");
+        output.WriteLine($"base: {Base32Experimental.ConvertBase32ToBinaryString(new string(chars), spacer: true, verbose: false)}");
+        
+        var buffer = new byte[Base32.GetDataLength(chars)];
+        var decodedLength = Base32Experimental.FromBase32_log(chars, buffer, Log);
+        Assert.Equal(data.Length, decodedLength);
+        Assert.Equal(data, buffer);
+        var builder = new StringBuilder();
+        foreach (var b in buffer)
         {
-            sb.Append("0x" + b.ToString("x2") + ", ");
+            builder.Append($"{b:X2}-");
         }
-        output.WriteLine($"bytes: {sb}");
+        output.WriteLine($"decoded: {builder}");
+
+        output.WriteLine($"decoded base32 binary:\n{Base32Experimental.ConvertBase32ToBinaryString(new string(chars))}");
     }
 
     [Fact]
     public void Encode_decode_empty()
     {
         CompareEncodeDecodeAll([]);
+    }
+    
+    [Fact]
+    public void Encode_decode_all_of_two_bytes()
+    {
+        for (byte i = 0; i < 255; i++)
+        {
+            CompareEncodeDecodeAll([i]);
+            for (byte j = 0; j < 255; j++)
+            {
+                CompareEncodeDecodeAll([i, j]);
+            }
+        }
     }
     
     [Fact]
